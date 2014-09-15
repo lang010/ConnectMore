@@ -13,7 +13,7 @@
 #
 
 from tkinter import *;
-from tkinter.filedialog import *;
+from tkinter import filedialog;
 from tkinter import messagebox;
 from subprocess import *;
 from threading import *;
@@ -22,9 +22,17 @@ import os;
 import random;
 
 defaultEngineFile = '';
+osName = os.uname()[0];
 if os.name == 'nt':
     from subprocess import STARTUPINFO;
     defaultEngineFile = 'engines/cloudict.exe';
+elif osName == 'Darwin':
+    defaultEngineFile = 'engines/cloudict.app';
+# elif osName == 'Linux':
+#    defaultEngineFile = 'engines/cloudict.linux';
+else:
+    print('Not supported OS');
+    exit(-1);
 
 class Move:
     NONE = 0;
@@ -243,16 +251,16 @@ class App(Frame):
         im['go_b'] = PhotoImage(file='imgs/go_b.gif');
         im['go_w'] = PhotoImage(file='imgs/go_w.gif');
 
-        im['angel'] = PhotoImage(file='imgs/Emotes-face-angel.png');
-        im['laugh'] = PhotoImage(file='imgs/Emotes-face-laugh.png');
-        im['plain'] = PhotoImage(file='imgs/Emotes-face-plain.png');
-        im['raspberry'] = PhotoImage(file='imgs/Emotes-face-raspberry.png');
-        im['sad'] = PhotoImage(file='imgs/Emotes-face-sad.png');
-        im['smile'] = PhotoImage(file='imgs/Emotes-face-smile.png');
-        im['smile-big'] = PhotoImage(file='imgs/Emotes-face-smile-big.png');
-        im['surprise'] = PhotoImage(file='imgs/Emotes-face-surprise.png');
-        im['uncertain'] = PhotoImage(file='imgs/Emotes-face-uncertain.png');
-        im['wink'] = PhotoImage(file='imgs/Emotes-face-wink.png');
+        im['angel'] = PhotoImage(file='imgs/Emotes-face-angel.gif');
+        im['laugh'] = PhotoImage(file='imgs/Emotes-face-laugh.gif');
+        im['plain'] = PhotoImage(file='imgs/Emotes-face-plain.gif');
+        im['raspberry'] = PhotoImage(file='imgs/Emotes-face-raspberry.gif');
+        im['sad'] = PhotoImage(file='imgs/Emotes-face-sad.gif');
+        im['smile'] = PhotoImage(file='imgs/Emotes-face-smile.gif');
+        im['smile-big'] = PhotoImage(file='imgs/Emotes-face-smile-big.gif');
+        im['surprise'] = PhotoImage(file='imgs/Emotes-face-surprise.gif');
+        im['uncertain'] = PhotoImage(file='imgs/Emotes-face-uncertain.gif');
+        im['wink'] = PhotoImage(file='imgs/Emotes-face-wink.gif');
 
         self.faces = {};
         waiting = [im['angel'], im['raspberry'], im['smile'], im['wink']];
@@ -505,6 +513,7 @@ class App(Frame):
             image = random.sample(ls, 1)[0];
             
         self.controlFrame.aiStatus.image['image'] = image;
+        self.controlFrame.aiStatus.info['text'] = '';
 
         msg = 'Press start to game.';
         if self.gameState == GameState.Win:
@@ -523,7 +532,7 @@ class App(Frame):
             if self.gameEngine.msg.startswith('Searching '):
                 s = self.gameEngine.msg.split(' ')[1];
                 ls = s.split('/');
-                cnt = float(ls[0])/float(ls[1]) * 20;
+                cnt = float(ls[0])/float(ls[1]) * 15;
                 msg += '.' * int(cnt);
         self.controlFrame.aiStatus.info['text'] = msg;
 
@@ -662,4 +671,5 @@ app.master.title('Cloudict.Connect6')
 # start the program
 app.mainloop()
 
+# root.destroy();
 
