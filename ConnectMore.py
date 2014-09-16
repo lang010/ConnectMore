@@ -22,17 +22,18 @@ import os;
 import random;
 
 defaultEngineFile = '';
-osName = os.uname()[0];
 if os.name == 'nt':
     from subprocess import STARTUPINFO;
     defaultEngineFile = 'engines/cloudict.exe';
-elif osName == 'Darwin':
-    defaultEngineFile = 'engines/cloudict.app';
-# elif osName == 'Linux':
-#    defaultEngineFile = 'engines/cloudict.linux';
 else:
-    print('Not supported OS');
-    exit(-1);
+    osName = os.uname()[0];
+    if osName == 'Darwin':
+        defaultEngineFile = 'engines/cloudict.app';
+    # elif osName == 'Linux':
+    #    defaultEngineFile = 'engines/cloudict.linux';
+    else:
+        print('Not supported OS');
+        exit(-1);
 
 class Move:
     NONE = 0;
