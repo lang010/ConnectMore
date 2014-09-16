@@ -29,8 +29,8 @@ else:
     osName = os.uname()[0];
     if osName == 'Darwin':
         defaultEngineFile = 'engines/cloudict.app';
-    # elif osName == 'Linux':
-    #    defaultEngineFile = 'engines/cloudict.linux';
+    elif osName == 'Linux':
+        defaultEngineFile = 'engines/cloudict.linux';
     else:
         print('Not supported OS');
         exit(-1);
@@ -252,8 +252,8 @@ class App(Frame):
         im['go_-'] = PhotoImage(file='imgs/go_-.gif');
         im['go_b'] = PhotoImage(file='imgs/go_b.gif');
         im['go_w'] = PhotoImage(file='imgs/go_w.gif');
-        im['go_bt'] = PhotoImage(file='imgs/go_bT.gif');
-        im['go_wt'] = PhotoImage(file='imgs/go_wT.gif');
+        im['go_bt'] = PhotoImage(file='imgs/go_bt.gif');
+        im['go_wt'] = PhotoImage(file='imgs/go_wt.gif');
 
         im['angel'] = PhotoImage(file='imgs/Emotes-face-angel.gif');
         im['laugh'] = PhotoImage(file='imgs/Emotes-face-laugh.gif');
