@@ -116,9 +116,8 @@ class GameEngine:
         self.setName('Unknown');
 
     def init(self, fileName = None, depth = None, vcf = None):
-        if self.proc != None:
-            self.proc.terminate();
-            self.proc = None;
+        self.release();
+
         if fileName != None and fileName.strip() != '':
             self.fileName = fileName;
         else:
@@ -172,9 +171,10 @@ class GameEngine:
         while self.proc != None:
             if self.proc.poll() == None:
                 self.proc.terminate();
-                sleep(0.5);
+                sleep(0.2);
             else:
                 self.proc = None;
+                break;
         self.move.invalidate();
 
     def next(self, moveList = []):
@@ -232,6 +232,7 @@ class App(Frame):
     def destroy(self):
         self.gameEngine.release();
         self.gameState = GameState.Exit;
+        self.searchThread.join();
         Frame.destroy(self);
 
     def initResource(self):
@@ -490,6 +491,8 @@ class App(Frame):
     def searching(self):
         while True:
             try:
+                if self.gameState == GameState.Exit:
+                    break;
                 if self.gameMode == GameState.AI2AI or self.gameMode == GameState.AI2Human:
                     if self.gameState == GameState.WaitForEngine:
                         self.gameEngine.next(self.moveList);
@@ -498,12 +501,12 @@ class App(Frame):
                         self.makeMove(move);
                         if self.gameState == GameState.WaitForEngine and self.gameMode == GameState.AI2Human:
                             self.toGameState(GameState.WaitForHumanFirst);
-                elif self.gameState == GameState.Exit:
-                    break;
+                    else:
+                        sleep(0.1);
                 else:
-                    sleep(0.5);
+                    sleep(0.2);
             except Exception as e:
-                print('Exception when searching: ' + e);
+                print('Exception when searching: ' + str(e));
                 sleep(0.5);
 
     def updateStatus(self):
