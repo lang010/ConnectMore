@@ -252,6 +252,8 @@ class App(Frame):
         im['go_-'] = PhotoImage(file='imgs/go_-.gif');
         im['go_b'] = PhotoImage(file='imgs/go_b.gif');
         im['go_w'] = PhotoImage(file='imgs/go_w.gif');
+        im['go_bt'] = PhotoImage(file='imgs/go_bT.gif');
+        im['go_wt'] = PhotoImage(file='imgs/go_wT.gif');
 
         im['angel'] = PhotoImage(file='imgs/Emotes-face-angel.gif');
         im['laugh'] = PhotoImage(file='imgs/Emotes-face-laugh.gif');
@@ -334,7 +336,7 @@ class App(Frame):
         labelframe.pack(fill=X, expand=1);
         labelframe.newBtn = Button(labelframe, text='Start Game', command=self.newGame);
         labelframe.newBtn.pack(side=TOP, fill=X);
-        labelframe.backBtn = Button(labelframe, text='Back Move', command=self.saveGame);
+        labelframe.backBtn = Button(labelframe, text='Back Move', command=self.backMove);
         labelframe.backBtn.pack(fill=X);
         labelframe.loadBtn = Button(labelframe, text='Load Engine', command=self.loadGameEngine);
         labelframe.loadBtn.pack(fill=BOTH);
@@ -426,7 +428,7 @@ class App(Frame):
             self.createBoardUnit(18, j, 'go_d');
         self.createBoardUnit(18, 18, 'go_dr');
 
-    def saveGame(self):
+    def backMove(self):
         pass;
 
     def initBoard(self):
@@ -568,24 +570,26 @@ class App(Frame):
             else:
                 self.toGameState(GameState.WaitForHumanFirst);
 
+    def addToMoveList(self, move):
+        # Rerender pre move
+        n = len(self.moveList);
+        if n > 0:
+            m = self.moveList[n-1];
+            self.placeColor(m.color, m.x1, m.y1);
+            self.placeColor(m.color, m.x2, m.y2);
+            
+        self.moveList.append(move);
+
     def makeMove(self, move):
         if move.isValidated():
             self.placeStone(move.color, move.x1, move.y1);
             self.placeStone(move.color, move.x2, move.y2);
-            self.moveList.append(move);
+            self.addToMoveList(move);
             # print('Made move:', move);
         return move;
 
     def placeStone(self, color, x, y):
-        if color == Move.BLACK:
-            imageKey = 'go_b';
-        elif color == Move.WHITE:
-            imageKey = 'go_w';
-        else:
-            return ;
-        self.gameBoard[x][y].color = color;
-        self.gameBoard[x][y]['image'] = self.images[imageKey];
-        self.gameBoard[x][y].grid(row=x, column=y);
+        self.placeColor(color, x, y, 't');
         if self.connectedBy(x, y):
             self.winner = color;
             self.toGameState(GameState.Win);
@@ -593,6 +597,18 @@ class App(Frame):
                 messagebox.showinfo("Black Win", "Black Win;) Impressive!")
             else:
                 messagebox.showinfo("White Win", "White Win;) Impressive!")
+
+    def placeColor(self, color, x, y, extra = ''):
+        if color == Move.BLACK:
+            imageKey = 'go_b';
+        elif color == Move.WHITE:
+            imageKey = 'go_w';
+        else:
+            return ;
+        imageKey += extra;
+        self.gameBoard[x][y].color = color;
+        self.gameBoard[x][y]['image'] = self.images[imageKey];
+        self.gameBoard[x][y].grid(row=x, column=y);
 
     def isNoneStone(self, x, y):
         return self.gameBoard[x][y].color == Move.NONE;
@@ -615,7 +631,7 @@ class App(Frame):
                 # First Move for Black
                 self.move = Move(color, x, y, x, y);
                 self.placeStone(self.move.color, x, y);
-                self.moveList.append(self.move);
+                self.addToMoveList(self.move);
                 self.toGameState(GameState.WaitForHumanFirst);
                 
             elif self.gameState == GameState.WaitForHumanFirst:
@@ -628,7 +644,7 @@ class App(Frame):
                 self.move.x2 = x;
                 self.move.y2 = y;
                 self.placeStone(self.move.color, x, y);
-                self.moveList.append(self.move);
+                self.addToMoveList(self.move);
                 if self.gameState == GameState.WaitForHumanSecond:
                     self.toGameState(GameState.WaitForHumanFirst);
             
@@ -640,7 +656,7 @@ class App(Frame):
             if len(self.moveList) == 0 and self.gameState == GameState.WaitForHumanFirst:
                 # First Move for Black
                 self.move = Move(color, x, y, x, y);
-                self.moveList.append(self.move);
+                self.addToMoveList(self.move);
                 self.placeStone(self.move.color, x, y);
                 self.toGameState(GameState.WaitForEngine);
                 
@@ -654,7 +670,7 @@ class App(Frame):
                 self.move.x2 = x;
                 self.move.y2 = y;
                 self.placeStone(self.move.color, x, y);
-                self.moveList.append(self.move);
+                self.addToMoveList(self.move);
                 if self.gameState == GameState.WaitForHumanSecond:
                     self.toGameState(GameState.WaitForEngine);
 
