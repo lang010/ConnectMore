@@ -1,38 +1,43 @@
 Copyright (c) 2014, Liang Li <ll@lianglee.org; liliang010@gmail.com>.
+
 All rights reserved.
 
 License: BSD-style
 
 ================================================================================
 
-About Cloudict
---------------
+About ConnectMore
+-----------------
 
 ConnectMore is a UI for Cloudict of the game Connect6, written by Python 3.
 Other connect6 programs with similar commands are also supported.
 
-For Cloudict, please see:
-    https://github.com/lang010/cloudict
+For the default game engine, please see [Cloudict].
 
-For the computer game Connect6, please see:
-    http://en.wikipedia.org/wiki/Connect6
+For the computer game, please see [Connect6].
+
+================================================================================
+    
+Screen Shot
+-----------
 
 ![screenshot](http://i.imgur.com/OL2kxZf.png)
 
-    Have fun! :-)
+> Have fun! :-)
 
 ================================================================================
 
-Compile Notes
--------------
+Dependency Notes
+----------------
 
-* This python 3 script depends on some standard modules, including:
-    Tk/tcl
-    subprocess
-    threading
-    time
-    os
-    random  
+This python 3 script depends on some standard modules, including:
+
+* Tk/tcl
+* subprocess
+* threading
+* time
+* os
+* random  
 
 ================================================================================
 
@@ -40,7 +45,9 @@ Runtime Notes
 -------------
 
 This program will create a process to run the game engine, default is Cloudict.
+
 It will send commands into the engine's stdin, and read its output from stdout by pipelines.
+
 The commands as follows:
 
     name        - print the name of the Game Engine.
@@ -51,4 +58,8 @@ The commands as follows:
     depth d     - set the alpha beta search depth, default is 6.
     vcf         - set vcf for searching.
     unvcf       - unset vcf.
+
+
+[Cloudict]:https://github.com/lang010/cloudict
+[Connect6]:http://en.wikipedia.org/wiki/Connect6
 
