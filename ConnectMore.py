@@ -432,7 +432,7 @@ class App(Frame):
         pass;
 
     def initBoard(self):
-        self.moveList.clear();
+        self.moveList = [];
         gameBoard = self.gameBoard;
         for i in range(Move.EDGE):
             for j in range(Move.EDGE):
