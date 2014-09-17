@@ -17,6 +17,8 @@ For Cloudict, please see:
 For the computer game Connect6, please see:
     http://en.wikipedia.org/wiki/Connect6
 
+![screenshot](http://i.imgur.com/OL2kxZf.png)
+
     Have fun! :-)
 
 ================================================================================
