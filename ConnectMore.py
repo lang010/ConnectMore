@@ -292,7 +292,7 @@ class App(Frame):
         self.controlFrame = LabelFrame(self);
         self.controlFrame.pack(fill=BOTH, expand=1);
         
-        self.controlFrame.aiLevel = labelframe = LabelFrame(self.controlFrame, text='GameEngine AI Level');
+        self.controlFrame.aiLevel = labelframe = LabelFrame(self.controlFrame, text='AI Level');
         labelframe.pack(fill=X, expand=1);
         self.aiLevel = IntVar();
         #print(self.aiLevel.get());
@@ -317,7 +317,7 @@ class App(Frame):
         labelframe.humanRBtn = Radiobutton(labelframe, text="Human", variable=self.blackSelected, value=' ');
         labelframe.humanRBtn.select();
         labelframe.humanRBtn.pack( anchor = W );
-        labelframe.engineRBtn = Radiobutton(labelframe, text="GameEngine", variable=self.blackSelected, value='engine');
+        labelframe.engineRBtn = Radiobutton(labelframe, text="AI", variable=self.blackSelected, value='engine');
         labelframe.engineRBtn.pack( anchor = W );
         #print(self.blackSelected.get());
         
@@ -329,7 +329,7 @@ class App(Frame):
         labelframe.humanRBtn = Radiobutton(labelframe, text="Human", variable=self.whiteSelected, value=' ');
         labelframe.humanRBtn.select();
         labelframe.humanRBtn.pack( anchor = W );
-        labelframe.engineRBtn = Radiobutton(labelframe, text="GameEngine", variable=self.whiteSelected, value='engine');
+        labelframe.engineRBtn = Radiobutton(labelframe, text="AI", variable=self.whiteSelected, value='engine');
         labelframe.engineRBtn.pack( anchor = W );
         
         self.controlFrame.gameContral = labelframe = LabelFrame(self.controlFrame, text='Game Contral');
@@ -345,7 +345,7 @@ class App(Frame):
 
         self.controlFrame.aiStatus = labelframe = LabelFrame(self.controlFrame, text='AI Status');
         labelframe.pack(side=BOTTOM, fill=BOTH, expand="yes");
-        labelframe.name = Label(labelframe, text='Game Engine Name');
+        labelframe.name = Label(labelframe, text='AI Name');
         labelframe.name.pack(side=TOP, anchor = W);
         labelframe.image = Label(labelframe, image=self.images['smile']);
         labelframe.image.pack(side=TOP, anchor = W);
