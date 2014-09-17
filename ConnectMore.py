@@ -367,7 +367,10 @@ class App(Frame):
         fileName = filedialog.askopenfilename(title='Load executable file for new game engine ', initialdir='engines');
         print('Load game engine:', fileName);
         if len(fileName) > 0:
-            self.initGameEngine(fileName);
+            try:
+                self.initGameEngine(fileName);
+            except Exception as e:
+                messagebox.showinfo("Error","Error to load the engine: " + fileName + ",\n errors: " + str(e));
 
     def initGameEngine(self, fileName=''):
         self.gameEngine.init(fileName, self.aiLevel.get(), self.isVcf());
@@ -429,16 +432,30 @@ class App(Frame):
         self.createBoardUnit(18, 18, 'go_dr');
 
     def backMove(self):
-        pass;
+        if self.gameMode == GameState.AI2Human or self.gameMode == GameState.Human2Human:
+            if self.gameState == GameState.WaitForHumanFirst:
+                if self.gameMode == GameState.AI2Human and len(self.moveList) > 1:
+                    # Back to 2 Move
+                    self.unmakeTopMove();
+                    self.unmakeTopMove();
+                elif self.gameMode == GameState.Human2Human and len(self.moveList) > 0:
+                    # Back to 1 Move
+                    self.unmakeTopMove();
+            elif self.gameState == GameState.WaitForHumanSecond:
+                self.unplaceColor(self.move.x1, self.move.y1);
+                self.toGameState(GameState.WaitForHumanFirst);
 
     def initBoard(self):
         self.moveList = [];
-        gameBoard = self.gameBoard;
         for i in range(Move.EDGE):
             for j in range(Move.EDGE):
-                gameBoard[i][j]['image'] = gameBoard[i][j].initImage;
-                gameBoard[i][j].color = 0;
-                gameBoard[i][j].grid(row=i, column=j);
+                self.unplaceColor(i, j);
+
+    def unplaceColor(self, i, j):
+        gameBoard = self.gameBoard;
+        gameBoard[i][j]['image'] = gameBoard[i][j].initImage;
+        gameBoard[i][j].color = 0;
+        gameBoard[i][j].grid(row=i, column=j);
 
     def connectedByDirection(self, x, y, dx, dy):
         gameBoard = self.gameBoard;
@@ -579,6 +596,17 @@ class App(Frame):
             self.placeColor(m.color, m.x2, m.y2);
             
         self.moveList.append(move);
+
+    def unmakeTopMove(self):
+        if len(self.moveList) > 0:
+            m = self.moveList[-1];
+            self.moveList = self.moveList[:-1];
+            self.unplaceColor(m.x1, m.y1);
+            self.unplaceColor(m.x2, m.y2);
+            if len(self.moveList) > 0:
+                m = self.moveList[-1];
+                self.placeColor(m.color, m.x1, m.y1, 't');
+                self.placeColor(m.color, m.x2, m.y2, 't');
 
     def makeMove(self, move):
         if move.isValidated():
