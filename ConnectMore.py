@@ -20,6 +20,8 @@ from threading import *;
 from time import *;
 import os;
 import random;
+if os.name == 'nt':
+    from subprocess import STARTUPINFO;
 
 class Move:
     NONE = 0;
@@ -105,7 +107,6 @@ class GameEngine:
         # Check the os, supported Linux/Mac/Windows.
         defaultEngineFile = '';
         if os.name == 'nt':
-            from subprocess import STARTUPINFO;
             defaultEngineFile = 'engines/cloudict.exe';
         else:
             osName = os.uname()[0];
