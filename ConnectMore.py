@@ -21,20 +21,6 @@ from time import *;
 import os;
 import random;
 
-defaultEngineFile = '';
-if os.name == 'nt':
-    from subprocess import STARTUPINFO;
-    defaultEngineFile = 'engines/cloudict.exe';
-else:
-    osName = os.uname()[0];
-    if osName == 'Darwin':
-        defaultEngineFile = 'engines/cloudict.app';
-    elif osName == 'Linux':
-        defaultEngineFile = 'engines/cloudict.linux';
-    else:
-        print('Not supported OS');
-        exit(-1);
-
 class Move:
     NONE = 0;
     BLACK = 1;
@@ -109,11 +95,28 @@ class Move:
 
 class GameEngine:
     def __init__(self):
-        self.fileName = defaultEngineFile;
+        self.fileName = GameEngine.getDefaultEngineFile();
         self.proc = None;
         self.move = Move();
         self.color = Move.NONE;
         self.setName('Unknown');
+
+    def getDefaultEngineFile():
+        # Check the os, supported Linux/Mac/Windows.
+        defaultEngineFile = '';
+        if os.name == 'nt':
+            from subprocess import STARTUPINFO;
+            defaultEngineFile = 'engines/cloudict.exe';
+        else:
+            osName = os.uname()[0];
+            if osName == 'Darwin':
+                defaultEngineFile = 'engines/cloudict.app';
+            elif osName == 'Linux':
+                defaultEngineFile = 'engines/cloudict.linux';
+            else:
+                print('Not supported OS');
+                exit(-1);
+        return defaultEngineFile;
 
     def init(self, fileName = None, depth = None, vcf = None):
         self.release();
@@ -133,7 +136,7 @@ class GameEngine:
 
         # game engine name
         self.setName(fileName);
-        self.proc.stdin.write(b'name\n');
+        self.sendCmd('name\n');
         while True:
             msg = self.waitForNextMsg();
             if msg.startswith('name '):
@@ -143,14 +146,14 @@ class GameEngine:
         if depth != None:
             cmd = 'depth ' + str(depth) + '\n';
             # print(cmd);
-            self.proc.stdin.write(cmd.encode());
+            self.sendCmd(cmd);
         if vcf != None:
             if vcf:
                 cmd = 'vcf\n';
             else:
                 cmd = 'unvcf\n';
             # print(cmd);
-            self.proc.stdin.write(cmd.encode());
+            self.sendCmd(cmd);
             
         self.move.invalidate();
 
@@ -171,6 +174,8 @@ class GameEngine:
         while self.proc != None:
             if self.proc.poll() == None:
                 self.proc.terminate();
+                # self.sendCmd('quit\n');
+                # print('Release');
                 sleep(0.2);
             else:
                 self.proc = None;
@@ -180,21 +185,33 @@ class GameEngine:
     def next(self, moveList = []):
         if self.proc != None:
             cmd = 'new xxx\n';
-            self.proc.stdin.write(cmd.encode());
-            # print('next stdin:', cmd)
+            self.sendCmd(cmd);
             for m in moveList:
                 cmd = m.toPlaceCmd();
-                # print('next stdin:', cmd);
-                self.proc.stdin.write(cmd.encode());
+                self.sendCmd(cmd);
 
             cmd = 'next\n';
-            self.proc.stdin.write(cmd.encode());
-            # print('next stdin:', cmd);
+            self.sendCmd(cmd);
+
+    def sendCmd(self, cmd):
+        if self.proc != None:
+            try:
+                # print('sendCmd to stdin:', cmd);
+                if len(cmd) < 1 or cmd[-1] != '\n':
+                    # Add ret in the end;
+                    cmd += '\n';
+                self.proc.stdin.write(cmd.encode());
+            except Exception as e:
+                print('Error for sendCmd:', cmd, str(e));
 
     def waitForNextMsg(self):
-        # print('Waiting');
-        self.msg = self.proc.stdout.readline().decode();
-        # print('out:', self.msg);
+        if self.proc != None:
+            try:
+                # print('Waiting');
+                self.msg = self.proc.stdout.readline().decode();
+                # print('out:', self.msg);
+            except Exception as e:
+                print('Error for waitForNextMsg:', str(e));
         return self.msg;
 
 class GameState:
@@ -230,8 +247,8 @@ class App(Frame):
         self.initBoard();
 
     def destroy(self):
-        self.gameEngine.release();
         self.gameState = GameState.Exit;
+        self.gameEngine.release();
         self.searchThread.join();
         Frame.destroy(self);
 
@@ -340,7 +357,7 @@ class App(Frame):
         labelframe.backBtn.pack(fill=X);
         labelframe.loadBtn = Button(labelframe, text='Load Engine', command=self.loadGameEngine);
         labelframe.loadBtn.pack(fill=BOTH);
-        labelframe.quitBtn = Button(labelframe, text='Quit Game', command=root.destroy);
+        labelframe.quitBtn = Button(labelframe, text='Quit Game', command=self.master.destroy);
         labelframe.quitBtn.pack(fill=X);
 
         self.controlFrame.aiStatus = labelframe = LabelFrame(self.controlFrame, text='AI Status');
@@ -498,7 +515,9 @@ class App(Frame):
     def waitForMove(self):
         color = self.nextColor();
         while True:
+            # print('waitForMove');
             msg = self.gameEngine.waitForNextMsg();
+            # print('Msg:', msg);
             move = Move.fromCmd(msg, color);
             # print('Wait move:', move);
             self.updateStatus();
@@ -704,20 +723,23 @@ class App(Frame):
 
         return ;
         
+def main():
 
-root = Tk();
+    root = Tk();
 
-# create the application
-app = App(root)
+    # create the application
+    app = App(root)
 
-#
-# here are method calls to the window manager class
-#
-app.master.title('Cloudict.Connect6')
-# app.master.maxsize(840, 840)
+    #
+    # here are method calls to the window manager class
+    #
+    app.master.title('Cloudict.Connect6')
+    # app.master.maxsize(840, 840)
 
-# start the program
-app.mainloop()
+    # start the program
+    app.mainloop()
 
-# root.destroy();
+    # root.destroy();
 
+if __name__ == '__main__':
+    main();

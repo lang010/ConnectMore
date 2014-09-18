@@ -1,23 +1,22 @@
-Copyright (c) 2014, Liang Li <ll@lianglee.org; liliang010@gmail.com>.
+Copyright (c) 2014, Liang Li<ll@lianglee.org; liliang010@gmail.com>.
 
 All rights reserved.
 
 License: BSD-style
 
 ================================================================================
-
 About ConnectMore
 -----------------
 
 ConnectMore is a UI for Cloudict of the game Connect6, written by Python 3.
 Other connect6 programs with similar commands are also supported.
+It can be ran on different platform including Linux/Mac/Windows.
 
 For the default game engine, please see [Cloudict].
 
 For the computer game, please see [Connect6].
 
 ================================================================================
-    
 Screen Shot
 -----------
 
@@ -26,7 +25,6 @@ Screen Shot
 > Have fun! :-)
 
 ================================================================================
-
 Dependency Notes
 ----------------
 
@@ -40,7 +38,6 @@ This python 3 script depends on some standard modules, including:
 * random  
 
 ================================================================================
-
 Runtime Notes
 -------------
 
